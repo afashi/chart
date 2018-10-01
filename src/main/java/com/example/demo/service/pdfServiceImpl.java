@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
 import com.example.demo.service.util.PdfCreator;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -30,12 +32,6 @@ public class pdfServiceImpl {
     }
     public static void main(String[] arg){
         try {
-/*            WebClient webClient = new WebClient();
-            HtmlPage page = webClient.getPage("src/main/resources/template/");
-            webClient.waitForBackgroundJavaScript(1000);
-            String svg = page.getElementById("diagram").asXml();*/
-
-
             outputPdf();
         } catch (Exception e) {
             e.printStackTrace();
