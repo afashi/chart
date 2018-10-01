@@ -30,6 +30,12 @@ public class pdfServiceImpl {
     }
     public static void main(String[] arg){
         try {
+/*            WebClient webClient = new WebClient();
+            HtmlPage page = webClient.getPage("src/main/resources/template/");
+            webClient.waitForBackgroundJavaScript(1000);
+            String svg = page.getElementById("diagram").asXml();*/
+
+
             outputPdf();
         } catch (Exception e) {
             e.printStackTrace();
