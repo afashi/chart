@@ -1,19 +1,20 @@
 package com.example.demo.web;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriverService;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import sun.misc.BASE64Decoder;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 数据库操作
@@ -40,14 +41,32 @@ public class GirlController {
         os.write(b);
         os.flush();
         os.close();*/
-        String path = ResourceUtils.getURL("classpath:").getPath();
-        System.setProperty("webdriver.chrome.driver", path + "\\chromedriver.exe");
-        ChromeOptions chromeOptions = new ChromeOptions();
-//        设置为 headless 模式 （必须）
-        chromeOptions.addArguments("--headless");
-//        设置浏览器窗口打开大小  （非必须）
-        chromeOptions.addArguments("--window-size=1920,1080");
-        WebDriver driver = new ChromeDriver(chromeOptions);
+        //   WebDriverManager.phantomjs().setup();
+        DesiredCapabilities dcaps = new DesiredCapabilities();
+        //ssl证书支持
+        dcaps.setCapability("acceptSslCerts", true);
+        //截屏支持
+        dcaps.setCapability("takesScreenshot", true);
+        //css搜索支持
+        dcaps.setCapability("cssSelectorsEnabled", true);
+        //js支持
+        dcaps.setJavascriptEnabled(true);
+        //驱动支持
+        String osName = System.getProperties().getProperty("os.name").toLowerCase();
+        System.out.println(osName);
+        if (osName.indexOf("linux")>-1) {
+            dcaps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "/home/deploy/driver/phantomjs");
+        }else{
+            dcaps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "D:\\code\\environment\\phantomJS\\phantomjs.exe");
+        }
+        Logger.getLogger(PhantomJSDriverService.class.getName()).setLevel(Level.OFF);
+        String[] phantomArgs = new  String[] {
+                "--webdriver-logfile=/home/deploy/phantomjsdriver.log"//,
+               // "--webdriver-loglevel=NONE"
+        };
+        dcaps.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, phantomArgs);
+        PhantomJSDriver driver = new PhantomJSDriver(dcaps);
+   //     driver.setLogLevel(Level.OFF);
         driver.get("http://localhost:8080/h");
         String src = driver.findElement(By.id("pic")).getAttribute("src");
         src = src.replace("data:image/png;base64,", "");
